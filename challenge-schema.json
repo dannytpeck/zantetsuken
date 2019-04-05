@@ -1,0 +1,42 @@
+{
+  AboutChallenge: "<h3 id="tagline" class="brandingBckgrndColor" style="padding: 10px; color: #fff; text-transform: uppercase">hot topics</h3><div><p>Human Performance Coaching can sound ominous. Maybe you don't know what coaching is or you're not sure how a coach could support you. You're not alone! We will go over what human performance coaching is, what you can expect, and how your coach can support you. As a bonus, you will also hear a few testimonials from individuals who have achieved success through coaching!</p><p style="text-align: center"><a href="/api/Redirect?url=https%3A%2F%2Fwellmetricssurveys.secure.force.com%2FEvent%2FCoachingEventCheckin%3Fp%3D%5Be%5D%26e%3Da073900000aAyr1%26cpName%3DCoaching%20101%26em%3D%5Bemail%5D%26emid%3D%5Bemployeeid%5D%26fname%3D%5Bfirst%5D%26lname%3D%5Blast%5D" target="_blank" rel="noopener"> <strong> Join us on 2/19 at 9:30am PST (10:30am MT, 11:30am CT, 12:30pm ET) </strong> </a></p><p style="text-align: center">– OR –</p><p style="text-align: center"><a href="/api/Redirect?url=https%3A%2F%2Fwellmetricssurveys.secure.force.com%2FEvent%2FCoachingEventCheckin%3Fp%3D%5Be%5D%26e%3Da073900000aAyrB%26cpName%3DCoaching%20101%26em%3D%5Bemail%5D%26emid%3D%5Bemployeeid%5D%26fname%3D%5Bfirst%5D%26lname%3D%5Blast%5D" target="_blank" rel="noopener"> <strong> Join us on 2/21 at 12:30pm PST (1:30pm MT, 2:30pm CT, 3:30pm ET) </strong> </a></p><p><em> If you are unable to attend the live webinar session, be sure to register so that you have access to the recording! </em></p><hr><p style="color: #a42022"><strong>After attending the scheduled webinar, be sure to track your points before the end of the month! Just click the "+ Track" button in the challenge.</strong></p></div><p><span class="coachinginfo"> <a href="/api/Redirect?url=https%3A%2F%2Fwellmetricssurveys.secure.force.com%2FEvent%2FCoachingEventCheckin%3Fp%3D%5Be%5D%26cpName%3DChange+Your+Habits%26participantCode%3D%5Bparticipantcode%5D%26eventType%3DIgnite+Your+Life" target="_blank" rel="noopener"> <img style="width: 100%" src="https://mywellnessnumbers.com/ChallengeBank/coaching-messages/2017/ADURO_Challenge_CoachingMessages_ChangeHabits.png" alt="healthcoach"> </a> </span> <img style="width: 100%" src="https://mywellnessnumbers.com/ChallengeBank/inline-images/CB_Well-Being_web.png" alt="Growth and Development"></p><p style="font-size: 9px">© Copyright 2019 <a style="text-decoration: none" href="http://www.adurolife.com/" target="_blank" rel="noopener"> ADURO, INC. </a> All rights reserved.</p>"
+  ActivityReward: {Type: "IncentivePoints", Value: "50", Unit: "pts"}
+  ActivityTemplateId: null
+  ActivityType: "do the activity in the description"
+  AmountUnit: "times"
+  ButtonText: ""
+  ChallengeId: 230448
+  ChallengeLogoThumbURL: "https://d1dyf6uqjwvcrk.cloudfront.net/cfs-file.ashx/__key/CommunityServer-Components-PostAttachments/00-21-63-11-92/thumb_5F00_FebHT.png"
+  ChallengeLogoURL: "https://d1dyf6uqjwvcrk.cloudfront.net/cfs-file.ashx/__key/CommunityServer-Components-PostAttachments/00-21-63-03-64/FebHT.png"
+  ChallengeTarget: 1
+  ChallengeType: "OneTimeEvent"
+  DailySelfReportLimit: null
+  Dimensions: ["Resilience"]
+  DisplayInProgram: true
+  DisplayPriority: null
+  EmployerId: 106687
+  EndDate: "2019-02-28T00:00:00"
+  EventCode: ""
+  FeaturedData: null
+  Frequency: "None"
+  IsDeviceEnabled: false
+  IsDisabled: false
+  IsFeatured: null
+  IsSelfReportEnabled: true
+  IsTeamChallenge: false
+  LeaderboardTag: ""
+  Name: "Hot Topics: Coaching 101"
+  PageFilters: ["Default"]
+  PartnerId: 0
+  Recommended: false
+  SetDisplayPriorityToNull: null
+  ShortDescription: "<p><strong>After you attend this month's Hot Topics webinar or watch the recording, click "+ Track" to award yourself points.</strong></p>"
+  ShowExtendedDescription: false
+  ShowWeeklyCalendar: false
+  StartDate: "2019-02-08T00:00:00"
+  Status: "Completed"
+  StrategyText: "To complete this,  <b><span class="editactivity">do the activity in the description</span></b>."
+  TargetUrl: ""
+  Targeting: []
+  TeamSize: null
+}

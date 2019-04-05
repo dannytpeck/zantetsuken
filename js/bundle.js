@@ -5795,13 +5795,109 @@ var App = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {}
   }, {
+    key: 'getActivityLifecycle',
+    value: function getActivityLifecycle() {
+      $.ajax({
+        url: 'https://api.limeade.com/api/admin/activity',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSIsImtpZCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSJ9.eyJjbGllbnRfaWQiOiJpbnRlcm5hbGNsaWVudCIsInNjb3BlIjpbImFwaWFjY2VzcyIsIm9wZW5pZCIsInBpaWlkZW50aXR5Il0sInN1YiI6IjU3NDU4NDAiLCJhbXIiOiJwYXNzd29yZCIsImF1dGhfdGltZSI6MTU1NDM2NDA1MiwiaWRwIjoiaWRzcnYiLCJuYW1lIjoiTGltZWFkZWRlbW9yYkFkbWluIiwibGltZWFkZV9hY2NvdW50X2lkIjoiNTc0NTg0MCIsImVtcGxveWVyaWQiOiIxMDY2ODciLCJlbXBsb3llcl9pZCI6IjEwNjY4NyIsInJvbGUiOlsiQWRtaW4iLCJQcm9ncmFtQWRtaW4iXSwiZW1wbG95ZXJuYW1lIjoiTGltZWFkZWRlbW9yYiIsImdpdmVuX25hbWUiOiJMaW1lYWRlZGVtb3JiIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiTGltZWFkZWRlbW9yYkFkbWluQGFkdXJvbGlmZS5jb20iLCJpc3MiOiJ3d3cubGltZWFkZS5jb20iLCJhdWQiOiJ3d3cubGltZWFkZS5jb20vcmVzb3VyY2VzIiwiZXhwIjoxNTg1OTAwMDUyLCJuYmYiOjE1NTQzNjQwNTJ9.lBxDcJISpOztmrO89W1rSFyNBjWHYBXbvSd1rQCQ8MzWVK-4XYghZ5_Cvm2we0c8PaAOHd0tZMVKc00R_s0-88adaXv0KkxA4VVjKoSQOXopFccuHyzPPxktFqNidVfJMr3_GL38eozqA0p336LHIEH6vWTqtXoptNagcxUw-vipyXKGfx7OAoqwu27T7XmPTjTR_yZqYEkFF1wUg4T0Z5mXgflzACW-XXihFH9_8E5_UzdD3_qoAq6ZABcjFfs3wEXwHHZTvC0S0EeoSPPkwxxVYMOqe4btwGY5HWz1a7hJBu2tFxPcg6xm_TZS2kFJlHywS9UIuQ-jgLyiwvSX-Q'
+        },
+        contentType: 'application/json; charset=utf-8',
+        success: function success(result) {
+          var tiles = result.Data;
+          console.log(tiles);
+
+          function isItA2019HotTopic(tile) {
+            return tile.Name.includes('Hot Topics') && tile.StartDate.includes('2019');
+          }
+
+          var filteredTiles = tiles.filter(isItA2019HotTopic);
+
+          console.log(filteredTiles);
+
+          var tile5 = filteredTiles[4];
+
+          $.ajax({
+            url: 'https://api.limeade.com/api/admin/activity/' + tile5.ChallengeId,
+            type: 'PUT',
+            dataType: 'json',
+            headers: {
+              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSIsImtpZCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSJ9.eyJjbGllbnRfaWQiOiJpbnRlcm5hbGNsaWVudCIsInNjb3BlIjpbImFwaWFjY2VzcyIsIm9wZW5pZCIsInBpaWlkZW50aXR5Il0sInN1YiI6IjU3NDU4NDAiLCJhbXIiOiJwYXNzd29yZCIsImF1dGhfdGltZSI6MTU1NDM2NDA1MiwiaWRwIjoiaWRzcnYiLCJuYW1lIjoiTGltZWFkZWRlbW9yYkFkbWluIiwibGltZWFkZV9hY2NvdW50X2lkIjoiNTc0NTg0MCIsImVtcGxveWVyaWQiOiIxMDY2ODciLCJlbXBsb3llcl9pZCI6IjEwNjY4NyIsInJvbGUiOlsiQWRtaW4iLCJQcm9ncmFtQWRtaW4iXSwiZW1wbG95ZXJuYW1lIjoiTGltZWFkZWRlbW9yYiIsImdpdmVuX25hbWUiOiJMaW1lYWRlZGVtb3JiIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiTGltZWFkZWRlbW9yYkFkbWluQGFkdXJvbGlmZS5jb20iLCJpc3MiOiJ3d3cubGltZWFkZS5jb20iLCJhdWQiOiJ3d3cubGltZWFkZS5jb20vcmVzb3VyY2VzIiwiZXhwIjoxNTg1OTAwMDUyLCJuYmYiOjE1NTQzNjQwNTJ9.lBxDcJISpOztmrO89W1rSFyNBjWHYBXbvSd1rQCQ8MzWVK-4XYghZ5_Cvm2we0c8PaAOHd0tZMVKc00R_s0-88adaXv0KkxA4VVjKoSQOXopFccuHyzPPxktFqNidVfJMr3_GL38eozqA0p336LHIEH6vWTqtXoptNagcxUw-vipyXKGfx7OAoqwu27T7XmPTjTR_yZqYEkFF1wUg4T0Z5mXgflzACW-XXihFH9_8E5_UzdD3_qoAq6ZABcjFfs3wEXwHHZTvC0S0EeoSPPkwxxVYMOqe4btwGY5HWz1a7hJBu2tFxPcg6xm_TZS2kFJlHywS9UIuQ-jgLyiwvSX-Q'
+            },
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+              'AboutChallenge': tile5.AboutChallenge.replace('Copyright', 'CopyLEFT')
+            }),
+            success: function success(result) {
+              console.log(result);
+            }
+          });
+        }
+      });
+    }
+  }, {
+    key: 'getActivities',
+    value: function getActivities() {
+      $.ajax({
+        url: 'https://api.limeade.com/api/activities/?types=5&status=1&attributes=1&contents=32319',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSIsImtpZCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSJ9.eyJjbGllbnRfaWQiOiJpbnRlcm5hbGNsaWVudCIsInNjb3BlIjpbImFwaWFjY2VzcyIsIm9wZW5pZCIsInBpaWlkZW50aXR5Il0sInN1YiI6IjU3NDU4NDAiLCJhbXIiOiJwYXNzd29yZCIsImF1dGhfdGltZSI6MTU1NDM2NDA1MiwiaWRwIjoiaWRzcnYiLCJuYW1lIjoiTGltZWFkZWRlbW9yYkFkbWluIiwibGltZWFkZV9hY2NvdW50X2lkIjoiNTc0NTg0MCIsImVtcGxveWVyaWQiOiIxMDY2ODciLCJlbXBsb3llcl9pZCI6IjEwNjY4NyIsInJvbGUiOlsiQWRtaW4iLCJQcm9ncmFtQWRtaW4iXSwiZW1wbG95ZXJuYW1lIjoiTGltZWFkZWRlbW9yYiIsImdpdmVuX25hbWUiOiJMaW1lYWRlZGVtb3JiIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiTGltZWFkZWRlbW9yYkFkbWluQGFkdXJvbGlmZS5jb20iLCJpc3MiOiJ3d3cubGltZWFkZS5jb20iLCJhdWQiOiJ3d3cubGltZWFkZS5jb20vcmVzb3VyY2VzIiwiZXhwIjoxNTg1OTAwMDUyLCJuYmYiOjE1NTQzNjQwNTJ9.lBxDcJISpOztmrO89W1rSFyNBjWHYBXbvSd1rQCQ8MzWVK-4XYghZ5_Cvm2we0c8PaAOHd0tZMVKc00R_s0-88adaXv0KkxA4VVjKoSQOXopFccuHyzPPxktFqNidVfJMr3_GL38eozqA0p336LHIEH6vWTqtXoptNagcxUw-vipyXKGfx7OAoqwu27T7XmPTjTR_yZqYEkFF1wUg4T0Z5mXgflzACW-XXihFH9_8E5_UzdD3_qoAq6ZABcjFfs3wEXwHHZTvC0S0EeoSPPkwxxVYMOqe4btwGY5HWz1a7hJBu2tFxPcg6xm_TZS2kFJlHywS9UIuQ-jgLyiwvSX-Q'
+        },
+        contentType: 'application/json; charset=utf-8',
+        success: function success(result) {
+          var tiles = result.Data;
+          console.log(tiles);
+
+          function isItAnHpTile(tile) {
+            return tile.Title.includes('Health &') || tile.Title.includes('Growth &') || tile.Title.includes('Money &') || tile.Title.includes('Contribution &');
+          }
+
+          var filteredTiles = tiles.filter(isItAnHpTile);
+
+          console.log(filteredTiles);
+
+          var footerHtml = '';
+          filteredTiles.map(function (tile) {
+            footerHtml += '<p>' + tile.Title + '</p>';
+          });
+          $('#footer').html(footerHtml);
+        },
+        error: function error(_error) {
+          // Error handling
+        }
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
         { id: 'app' },
         _react2.default.createElement(_header2.default, null),
-        _react2.default.createElement('div', null),
+        _react2.default.createElement(
+          'button',
+          { type: 'button', className: 'btn btn-primary', onClick: this.getActivities },
+          'Activities API'
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          '(what\'s visible in the platform)'
+        ),
+        _react2.default.createElement(
+          'button',
+          { type: 'button', className: 'btn btn-primary', onClick: this.getActivityLifecycle },
+          'ActivityLifecycle API'
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          '(pulls everything - past, present, and future - Even CIEs)'
+        ),
         _react2.default.createElement(_footer2.default, null),
         _react2.default.createElement(_upload_modal2.default, null)
       );
