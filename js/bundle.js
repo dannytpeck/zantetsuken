@@ -5757,6 +5757,8 @@ var _react = __webpack_require__(/*! react */ 30);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _limiter = __webpack_require__(/*! limiter */ 401);
+
 var _header = __webpack_require__(/*! ./header */ 151);
 
 var _header2 = _interopRequireDefault(_header);
@@ -5771,11 +5773,16 @@ var _upload_modal2 = _interopRequireDefault(_upload_modal);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// Allow 5 requests per second
+var limiter = new _limiter.RateLimiter(6, 'second');
 
 /* global $ */
 
@@ -5787,53 +5794,96 @@ var App = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-    _this.state = {};
+    _this.state = {
+      clients: []
+    };
     return _this;
   }
 
   _createClass(App, [{
     key: 'componentDidMount',
-    value: function componentDidMount() {}
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      $.getJSON('https://api.airtable.com/v0/appHXXoVD1tn9QATh/Clients?api_key=keyCxnlep0bgotSrX&view=sorted').done(function (data) {
+        var records = data.records;
+
+        if (data.offset) {
+          $.getJSON('https://api.airtable.com/v0/appHXXoVD1tn9QATh/Clients?api_key=keyCxnlep0bgotSrX&view=sorted&offset=' + data.offset).done(function (data) {
+            _this2.setState({
+              clients: [].concat(_toConsumableArray(records), _toConsumableArray(data.records))
+            });
+          });
+        } else {
+          _this2.setState({
+            clients: records
+          });
+        }
+      });
+    }
   }, {
     key: 'getActivityLifecycle',
     value: function getActivityLifecycle() {
-      $.ajax({
-        url: 'https://api.limeade.com/api/admin/activity',
-        type: 'GET',
-        dataType: 'json',
-        headers: {
-          Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSIsImtpZCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSJ9.eyJjbGllbnRfaWQiOiJpbnRlcm5hbGNsaWVudCIsInNjb3BlIjpbImFwaWFjY2VzcyIsIm9wZW5pZCIsInBpaWlkZW50aXR5Il0sInN1YiI6IjU3NDU4NDAiLCJhbXIiOiJwYXNzd29yZCIsImF1dGhfdGltZSI6MTU1NDM2NDA1MiwiaWRwIjoiaWRzcnYiLCJuYW1lIjoiTGltZWFkZWRlbW9yYkFkbWluIiwibGltZWFkZV9hY2NvdW50X2lkIjoiNTc0NTg0MCIsImVtcGxveWVyaWQiOiIxMDY2ODciLCJlbXBsb3llcl9pZCI6IjEwNjY4NyIsInJvbGUiOlsiQWRtaW4iLCJQcm9ncmFtQWRtaW4iXSwiZW1wbG95ZXJuYW1lIjoiTGltZWFkZWRlbW9yYiIsImdpdmVuX25hbWUiOiJMaW1lYWRlZGVtb3JiIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiTGltZWFkZWRlbW9yYkFkbWluQGFkdXJvbGlmZS5jb20iLCJpc3MiOiJ3d3cubGltZWFkZS5jb20iLCJhdWQiOiJ3d3cubGltZWFkZS5jb20vcmVzb3VyY2VzIiwiZXhwIjoxNTg1OTAwMDUyLCJuYmYiOjE1NTQzNjQwNTJ9.lBxDcJISpOztmrO89W1rSFyNBjWHYBXbvSd1rQCQ8MzWVK-4XYghZ5_Cvm2we0c8PaAOHd0tZMVKc00R_s0-88adaXv0KkxA4VVjKoSQOXopFccuHyzPPxktFqNidVfJMr3_GL38eozqA0p336LHIEH6vWTqtXoptNagcxUw-vipyXKGfx7OAoqwu27T7XmPTjTR_yZqYEkFF1wUg4T0Z5mXgflzACW-XXihFH9_8E5_UzdD3_qoAq6ZABcjFfs3wEXwHHZTvC0S0EeoSPPkwxxVYMOqe4btwGY5HWz1a7hJBu2tFxPcg6xm_TZS2kFJlHywS9UIuQ-jgLyiwvSX-Q'
-        },
-        contentType: 'application/json; charset=utf-8',
-        success: function success(result) {
-          var tiles = result.Data;
-          console.log(tiles);
+      this.state.clients.forEach(function (client) {
+        console.log('Starting on Client... ' + client.fields['Account Name']);
 
-          function isItA2019HotTopic(tile) {
-            return tile.Name.includes('Hot Topics') && tile.StartDate.includes('2019');
-          }
-
-          var filteredTiles = tiles.filter(isItA2019HotTopic);
-
-          console.log(filteredTiles);
-
-          var tile5 = filteredTiles[4];
-
+        if (client.fields['LimeadeAccessToken']) {
           $.ajax({
-            url: 'https://api.limeade.com/api/admin/activity/' + tile5.ChallengeId,
-            type: 'PUT',
+            url: 'https://api.limeade.com/api/admin/activity',
+            type: 'GET',
             dataType: 'json',
             headers: {
-              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSIsImtpZCI6IlNTZ2w4Zzg1ZDNELUlVaFY3dXB5bkQzMEVYTSJ9.eyJjbGllbnRfaWQiOiJpbnRlcm5hbGNsaWVudCIsInNjb3BlIjpbImFwaWFjY2VzcyIsIm9wZW5pZCIsInBpaWlkZW50aXR5Il0sInN1YiI6IjU3NDU4NDAiLCJhbXIiOiJwYXNzd29yZCIsImF1dGhfdGltZSI6MTU1NDM2NDA1MiwiaWRwIjoiaWRzcnYiLCJuYW1lIjoiTGltZWFkZWRlbW9yYkFkbWluIiwibGltZWFkZV9hY2NvdW50X2lkIjoiNTc0NTg0MCIsImVtcGxveWVyaWQiOiIxMDY2ODciLCJlbXBsb3llcl9pZCI6IjEwNjY4NyIsInJvbGUiOlsiQWRtaW4iLCJQcm9ncmFtQWRtaW4iXSwiZW1wbG95ZXJuYW1lIjoiTGltZWFkZWRlbW9yYiIsImdpdmVuX25hbWUiOiJMaW1lYWRlZGVtb3JiIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiTGltZWFkZWRlbW9yYkFkbWluQGFkdXJvbGlmZS5jb20iLCJpc3MiOiJ3d3cubGltZWFkZS5jb20iLCJhdWQiOiJ3d3cubGltZWFkZS5jb20vcmVzb3VyY2VzIiwiZXhwIjoxNTg1OTAwMDUyLCJuYmYiOjE1NTQzNjQwNTJ9.lBxDcJISpOztmrO89W1rSFyNBjWHYBXbvSd1rQCQ8MzWVK-4XYghZ5_Cvm2we0c8PaAOHd0tZMVKc00R_s0-88adaXv0KkxA4VVjKoSQOXopFccuHyzPPxktFqNidVfJMr3_GL38eozqA0p336LHIEH6vWTqtXoptNagcxUw-vipyXKGfx7OAoqwu27T7XmPTjTR_yZqYEkFF1wUg4T0Z5mXgflzACW-XXihFH9_8E5_UzdD3_qoAq6ZABcjFfs3wEXwHHZTvC0S0EeoSPPkwxxVYMOqe4btwGY5HWz1a7hJBu2tFxPcg6xm_TZS2kFJlHywS9UIuQ-jgLyiwvSX-Q'
+              Authorization: 'Bearer ' + client.fields['LimeadeAccessToken']
             },
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-              'AboutChallenge': tile5.AboutChallenge.replace('Copyright', 'CopyLEFT')
-            }),
-            success: function success(result) {
-              console.log(result);
+            contentType: 'application/json; charset=utf-8'
+          }).done(function (result) {
+            var tiles = result.Data;
+
+            function isItA2019HotTopic(tile) {
+              return tile.Name.includes('Hot Topics') && tile.StartDate.includes('2019') && !tile.StartDate.includes('01') && !tile.StartDate.includes('02') && !tile.StartDate.includes('03');
             }
+
+            var filteredTiles = tiles.filter(isItA2019HotTopic);
+
+            if (filteredTiles.length > 0) {
+              var updatedTiles = filteredTiles.slice(0);
+              var regex = /%26em%3D%5Bemail%5D%26emid%3D%5Bemployeeid%5D%26fname%3D%5Bfirst%5D%26lname%3D%5Blast%5D/g;
+              updatedTiles.map(function (tile) {
+                if (tile.AboutChallenge.match(regex)) {
+
+                  // Throttle requests
+                  limiter.removeTokens(1, function () {
+                    $.ajax({
+                      url: 'https://api.limeade.com/api/admin/activity/' + tile.ChallengeId,
+                      type: 'PUT',
+                      dataType: 'json',
+                      headers: {
+                        'Authorization': 'Bearer ' + client.fields['LimeadeAccessToken']
+                      },
+                      contentType: 'application/json; charset=utf-8',
+                      data: JSON.stringify({
+                        'AboutChallenge': tile.AboutChallenge.replace(regex, '%26participantCode%3D%5Bparticipantcode%5D%26eventType%3DHot%20Topics')
+                      })
+                    }).done(function (result) {
+                      console.log('Tile updated - ' + tile.Name);
+                    }).fail(function (xhr, textStatus, error) {
+                      console.error('Tile update PUT has failed', tile);
+                      console.error('Client =', client.fields['Account Name']);
+                    });
+                  });
+                } else {
+                  console.log('Update unnecessary');
+                }
+              });
+            } else {
+              console.log(client.fields['Account Name'] + ' does not have Hot Topics');
+            }
+          }).fail(function (xhr, textStatus, error) {
+            console.error('GET Activities has failed');
+            console.error('Client =', client.fields['Account Name']);
           });
+        } else {
+          console.error('Client has no LimeadeAccessToken');
         }
       });
     }
@@ -5850,15 +5900,12 @@ var App = function (_Component) {
         contentType: 'application/json; charset=utf-8',
         success: function success(result) {
           var tiles = result.Data;
-          console.log(tiles);
 
           function isItAnHpTile(tile) {
             return tile.Title.includes('Health &') || tile.Title.includes('Growth &') || tile.Title.includes('Money &') || tile.Title.includes('Contribution &');
           }
 
           var filteredTiles = tiles.filter(isItAnHpTile);
-
-          console.log(filteredTiles);
 
           var footerHtml = '';
           filteredTiles.map(function (tile) {
@@ -5874,13 +5921,17 @@ var App = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
+
       return _react2.default.createElement(
         'div',
         { id: 'app' },
         _react2.default.createElement(_header2.default, null),
         _react2.default.createElement(
           'button',
-          { type: 'button', className: 'btn btn-primary', onClick: this.getActivities },
+          { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+              return _this3.getActivities();
+            } },
           'Activities API'
         ),
         _react2.default.createElement(
@@ -5890,7 +5941,9 @@ var App = function (_Component) {
         ),
         _react2.default.createElement(
           'button',
-          { type: 'button', className: 'btn btn-primary', onClick: this.getActivityLifecycle },
+          { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+              return _this3.getActivityLifecycle();
+            } },
           'ActivityLifecycle API'
         ),
         _react2.default.createElement(
@@ -40102,6 +40155,373 @@ module.exports = function(originalModule) {
 __webpack_require__(/*! babel-polyfill */148);
 module.exports = __webpack_require__(/*! C:\Users\Danny Peck\Documents\projects\zantetsuken\src\index.jsx */147);
 
+
+/***/ }),
+/* 400 */
+/* no static exports found */
+/* all exports used */
+/*!**************************************!*\
+  !*** ./~/limiter/lib/tokenBucket.js ***!
+  \**************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {
+/**
+ * A hierarchical token bucket for rate limiting. See
+ * http://en.wikipedia.org/wiki/Token_bucket for more information.
+ * @author John Hurliman <jhurliman@cull.tv>
+ *
+ * @param {Number} bucketSize Maximum number of tokens to hold in the bucket.
+ *  Also known as the burst rate.
+ * @param {Number} tokensPerInterval Number of tokens to drip into the bucket
+ *  over the course of one interval.
+ * @param {String|Number} interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param {TokenBucket} parentBucket Optional. A token bucket that will act as
+ *  the parent of this bucket.
+ */
+var TokenBucket = function(bucketSize, tokensPerInterval, interval, parentBucket) {
+  this.bucketSize = bucketSize;
+  this.tokensPerInterval = tokensPerInterval;
+
+  if (typeof interval === 'string') {
+    switch (interval) {
+      case 'sec': case 'second':
+        this.interval = 1000; break;
+      case 'min': case 'minute':
+        this.interval = 1000 * 60; break;
+      case 'hr': case 'hour':
+        this.interval = 1000 * 60 * 60; break;
+      case 'day':
+        this.interval = 1000 * 60 * 60 * 24; break;
+      default:
+        throw new Error('Invaid interval ' + interval);
+    }
+  } else {
+    this.interval = interval;
+  }
+
+  this.parentBucket = parentBucket;
+  this.content = 0;
+  this.lastDrip = +new Date();
+};
+
+TokenBucket.prototype = {
+  bucketSize: 1,
+  tokensPerInterval: 1,
+  interval: 1000,
+  parentBucket: null,
+  content: 0,
+  lastDrip: 0,
+
+  /**
+   * Remove the requested number of tokens and fire the given callback. If the
+   * bucket (and any parent buckets) contains enough tokens this will happen
+   * immediately. Otherwise, the removal and callback will happen when enough
+   * tokens become available.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Function} callback(err, remainingTokens)
+   * @returns {Boolean} True if the callback was fired immediately, otherwise
+   *  false.
+   */
+  removeTokens: function(count, callback) {
+    var self = this;
+
+    // Is this an infinite size bucket?
+    if (!this.bucketSize) {
+      process.nextTick(callback.bind(null, null, count, Number.POSITIVE_INFINITY));
+      return true;
+    }
+
+    // Make sure the bucket can hold the requested number of tokens
+    if (count > this.bucketSize) {
+      process.nextTick(callback.bind(null, 'Requested tokens ' + count + ' exceeds bucket size ' +
+        this.bucketSize, null));
+      return false;
+    }
+
+    // Drip new tokens into this bucket
+    this.drip();
+
+    // If we don't have enough tokens in this bucket, come back later
+    if (count > this.content)
+      return comeBackLater();
+
+    if (this.parentBucket) {
+      // Remove the requested from the parent bucket first
+      return this.parentBucket.removeTokens(count, function(err, remainingTokens) {
+        if (err) return callback(err, null);
+
+        // Check that we still have enough tokens in this bucket
+        if (count > self.content)
+          return comeBackLater();
+
+        // Tokens were removed from the parent bucket, now remove them from
+        // this bucket and fire the callback. Note that we look at the current
+        // bucket and parent bucket's remaining tokens and return the smaller
+        // of the two values
+        self.content -= count;
+        callback(null, Math.min(remainingTokens, self.content));
+      });
+    } else {
+      // Remove the requested tokens from this bucket and fire the callback
+      this.content -= count;
+      process.nextTick(callback.bind(null, null, this.content));
+      return true;
+    }
+
+    function comeBackLater() {
+      // How long do we need to wait to make up the difference in tokens?
+      var waitInterval = Math.ceil(
+        (count - self.content) * (self.interval / self.tokensPerInterval));
+      setTimeout(function() { self.removeTokens(count, callback); }, waitInterval);
+      return false;
+    }
+  },
+
+  /**
+   * Attempt to remove the requested number of tokens and return immediately.
+   * If the bucket (and any parent buckets) contains enough tokens this will
+   * return true, otherwise false is returned.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Boolean} True if the tokens were successfully removed, otherwise
+   *  false.
+   */
+  tryRemoveTokens: function(count) {
+    // Is this an infinite size bucket?
+    if (!this.bucketSize)
+      return true;
+
+    // Make sure the bucket can hold the requested number of tokens
+    if (count > this.bucketSize)
+      return false;
+
+    // Drip new tokens into this bucket
+    this.drip();
+
+    // If we don't have enough tokens in this bucket, return false
+    if (count > this.content)
+      return false;
+
+    // Try to remove the requested tokens from the parent bucket
+    if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
+      return false;
+
+    // Remove the requested tokens from this bucket and return
+    this.content -= count;
+    return true;
+  },
+
+  /**
+   * Add any new tokens to the bucket since the last drip.
+   * @returns {Boolean} True if new tokens were added, otherwise false.
+   */
+  drip: function() {
+    if (!this.tokensPerInterval) {
+      this.content = this.bucketSize;
+      return;
+    }
+
+    var now = +new Date();
+    var deltaMS = Math.max(now - this.lastDrip, 0);
+    this.lastDrip = now;
+
+    var dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
+    this.content = Math.min(this.content + dripAmount, this.bucketSize);
+  }
+};
+
+module.exports = TokenBucket;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 10)))
+
+/***/ }),
+/* 401 */
+/* no static exports found */
+/* all exports used */
+/*!****************************!*\
+  !*** ./~/limiter/index.js ***!
+  \****************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+
+exports.RateLimiter = __webpack_require__(/*! ./lib/rateLimiter */ 403);
+exports.TokenBucket = __webpack_require__(/*! ./lib/tokenBucket */ 400);
+
+
+/***/ }),
+/* 402 */
+/* no static exports found */
+/* all exports used */
+/*!********************************!*\
+  !*** ./~/limiter/lib/clock.js ***!
+  \********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {var getMilliseconds = function() {
+  if (typeof process !== 'undefined' && process.hrtime) {
+    var hrtime = process.hrtime();
+    var seconds = hrtime[0];
+    var nanoseconds = hrtime[1];
+
+    return seconds * 1e3 +  Math.floor(nanoseconds / 1e6);
+  }
+
+  return new Date().getTime();
+}
+
+module.exports = getMilliseconds;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 10)))
+
+/***/ }),
+/* 403 */
+/* no static exports found */
+/* all exports used */
+/*!**************************************!*\
+  !*** ./~/limiter/lib/rateLimiter.js ***!
+  \**************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {var TokenBucket = __webpack_require__(/*! ./tokenBucket */ 400);
+var getMilliseconds = __webpack_require__(/*! ./clock */ 402);
+
+/**
+ * A generic rate limiter. Underneath the hood, this uses a token bucket plus
+ * an additional check to limit how many tokens we can remove each interval.
+ * @author John Hurliman <jhurliman@jhurliman.org>
+ *
+ * @param {Number} tokensPerInterval Maximum number of tokens that can be
+ *  removed at any given moment and over the course of one interval.
+ * @param {String|Number} interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param {Boolean} fireImmediately Optional. Whether or not the callback
+ *  will fire immediately when rate limiting is in effect (default is false).
+ */
+var RateLimiter = function(tokensPerInterval, interval, fireImmediately) {
+  this.tokenBucket = new TokenBucket(tokensPerInterval, tokensPerInterval,
+    interval, null);
+
+  // Fill the token bucket to start
+  this.tokenBucket.content = tokensPerInterval;
+
+  this.curIntervalStart = getMilliseconds();
+  this.tokensThisInterval = 0;
+  this.fireImmediately = fireImmediately;
+};
+
+RateLimiter.prototype = {
+  tokenBucket: null,
+  curIntervalStart: 0,
+  tokensThisInterval: 0,
+  fireImmediately: false,
+
+  /**
+   * Remove the requested number of tokens and fire the given callback. If the
+   * rate limiter contains enough tokens and we haven't spent too many tokens
+   * in this interval already, this will happen immediately. Otherwise, the
+   * removal and callback will happen when enough tokens become available.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Function} callback(err, remainingTokens)
+   * @returns {Boolean} True if the callback was fired immediately, otherwise
+   *  false.
+   */
+  removeTokens: function(count, callback) {
+    // Make sure the request isn't for more than we can handle
+    if (count > this.tokenBucket.bucketSize) {
+      process.nextTick(callback.bind(null, 'Requested tokens ' + count +
+        ' exceeds maximum tokens per interval ' + this.tokenBucket.bucketSize,
+        null));
+      return false;
+    }
+
+    var self = this;
+    var now = getMilliseconds();
+
+    // Advance the current interval and reset the current interval token count
+    // if needed
+    if (now < this.curIntervalStart
+      || now - this.curIntervalStart >= this.tokenBucket.interval) {
+      this.curIntervalStart = now;
+      this.tokensThisInterval = 0;
+    }
+
+    // If we don't have enough tokens left in this interval, wait until the
+    // next interval
+    if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
+      if (this.fireImmediately) {
+        process.nextTick(callback.bind(null, null, -1));
+      } else {
+        var waitInterval = Math.ceil(
+          this.curIntervalStart + this.tokenBucket.interval - now);
+
+        setTimeout(function() {
+          self.tokenBucket.removeTokens(count, afterTokensRemoved);
+        }, waitInterval);
+      }
+      return false;
+    }
+
+    // Remove the requested number of tokens from the token bucket
+    return this.tokenBucket.removeTokens(count, afterTokensRemoved);
+
+    function afterTokensRemoved(err, tokensRemaining) {
+      if (err) return callback(err, null);
+
+      self.tokensThisInterval += count;
+      callback(null, tokensRemaining);
+    }
+  },
+
+  /**
+   * Attempt to remove the requested number of tokens and return immediately.
+   * If the bucket (and any parent buckets) contains enough tokens and we
+   * haven't spent too many tokens in this interval already, this will return
+   * true. Otherwise, false is returned.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Boolean} True if the tokens were successfully removed, otherwise
+   *  false.
+   */
+  tryRemoveTokens: function(count) {
+    // Make sure the request isn't for more than we can handle
+    if (count > this.tokenBucket.bucketSize)
+      return false;
+
+    var now = getMilliseconds();
+
+    // Advance the current interval and reset the current interval token count
+    // if needed
+    if (now < this.curIntervalStart
+      || now - this.curIntervalStart >= this.tokenBucket.interval) {
+      this.curIntervalStart = now;
+      this.tokensThisInterval = 0;
+    }
+
+    // If we don't have enough tokens left in this interval, return false
+    if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
+      return false;
+
+    // Try to remove the requested number of tokens from the token bucket
+    var removed = this.tokenBucket.tryRemoveTokens(count);
+    if (removed) {
+      this.tokensThisInterval += count;
+    }
+    return removed;
+  },
+
+  /**
+   * Returns the number of tokens remaining in the TokenBucket.
+   * @returns {Number} The number of tokens remaining.
+   */
+  getTokensRemaining: function () {
+    this.tokenBucket.drip();
+    return this.tokenBucket.content;
+  }
+};
+
+module.exports = RateLimiter;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 10)))
 
 /***/ })
 /******/ ]);
