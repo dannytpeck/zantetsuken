@@ -31,9 +31,18 @@ body {
   width: 100%;
 }
 
-.tile-title h3 {
+.tile-title {
   height: 2.8em;
   overflow: hidden;
-  margin: 12px 18px 15px;
+  margin: 0.75em 1.125em 0.9375em;
   font-size: 1em;
+  font-weight: 500;
+}
+
+.brandingBckgrndColor {
+  background-color: #369;
+}
+
+#bottomImage {
+  width: 100%;
 }

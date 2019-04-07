@@ -5944,9 +5944,9 @@ var _footer = __webpack_require__(/*! ./footer */ 151);
 
 var _footer2 = _interopRequireDefault(_footer);
 
-var _upload_modal = __webpack_require__(/*! ./upload_modal */ 153);
+var _modal = __webpack_require__(/*! ./modal */ 407);
 
-var _upload_modal2 = _interopRequireDefault(_upload_modal);
+var _modal2 = _interopRequireDefault(_modal);
 
 var _tile = __webpack_require__(/*! ./tile */ 406);
 
@@ -6202,7 +6202,7 @@ var App = function (_Component) {
           this.renderTiles()
         ),
         _react2.default.createElement(_footer2.default, null),
-        _react2.default.createElement(_upload_modal2.default, null)
+        _react2.default.createElement(_modal2.default, null)
       );
     }
   }]);
@@ -6329,69 +6329,7 @@ var Header = function (_Component) {
 exports.default = Header;
 
 /***/ }),
-/* 153 */
-/* no static exports found */
-/* all exports used */
-/*!*****************************************!*\
-  !*** ./src/components/upload_modal.jsx ***!
-  \*****************************************/
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(/*! react */ 30);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var UploadModal = function UploadModal() {
-  return _react2.default.createElement(
-    "div",
-    { className: "modal fade", id: "uploadModal", tabIndex: "-1", role: "dialog" },
-    _react2.default.createElement(
-      "div",
-      { className: "modal-dialog", role: "document" },
-      _react2.default.createElement(
-        "div",
-        { className: "modal-content" },
-        _react2.default.createElement(
-          "div",
-          { className: "modal-header" },
-          _react2.default.createElement(
-            "h4",
-            { className: "modal-title", id: "myModalLabel" },
-            "Upload Log"
-          ),
-          _react2.default.createElement(
-            "button",
-            { type: "button", className: "close", "data-dismiss": "modal" },
-            "\xD7"
-          )
-        ),
-        _react2.default.createElement("div", { className: "modal-body", id: "uploadModalBody" }),
-        _react2.default.createElement(
-          "div",
-          { className: "modal-footer" },
-          _react2.default.createElement(
-            "button",
-            { type: "button", className: "btn btn-secondary", "data-dismiss": "modal" },
-            "Close"
-          )
-        )
-      )
-    )
-  );
-};
-
-exports.default = UploadModal;
-
-/***/ }),
+/* 153 */,
 /* 154 */
 /* no static exports found */
 /* all exports used */
@@ -40679,49 +40617,134 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = __webpack_require__(/*! react */ 30);
 
 var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Tile = function Tile(props) {
-  var tile = props.tile;
-  return _react2.default.createElement(
-    "div",
-    { className: "tile" },
-    _react2.default.createElement("img", { className: "tile-image", src: tile.SmallImageSrc, alt: "" }),
-    _react2.default.createElement(
-      "div",
-      { className: "tile-title" },
-      _react2.default.createElement(
-        "h3",
-        null,
-        tile.Title
-      )
-    ),
-    _react2.default.createElement(
-      "div",
-      { className: "n-item-details" },
-      _react2.default.createElement(
-        "div",
-        { className: "reward link-color" },
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/* globals $ */
+var Tile = function (_Component) {
+  _inherits(Tile, _Component);
+
+  function Tile() {
+    _classCallCheck(this, Tile);
+
+    return _possibleConstructorReturn(this, (Tile.__proto__ || Object.getPrototypeOf(Tile)).apply(this, arguments));
+  }
+
+  _createClass(Tile, [{
+    key: 'openTile',
+    value: function openTile(tile) {
+      $('#tileModal').modal();
+      $('#tileModalBody').html('\n      <img class="tile-image" src=' + tile.MediumImageSrc + ' />\n      <h3 class="my-3">' + tile.Title + '</h3>\n      <div>' + tile.ShortDescription + '</div>\n      <div>' + tile.HtmlDescription + '</div>\n    ');
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var tile = this.props.tile;
+      return _react2.default.createElement(
+        'div',
+        { className: 'tile', onClick: function onClick() {
+            return _this2.openTile(tile);
+          } },
+        _react2.default.createElement('img', { className: 'tile-image', src: tile.SmallImageSrc }),
         _react2.default.createElement(
-          "div",
-          { className: "reward-points-outer" },
+          'div',
+          { className: 'tile-title' },
+          tile.Title
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'tile-details' },
           _react2.default.createElement(
-            "span",
-            { className: "reward-points-num" },
+            'span',
+            { className: 'reward-points-num' },
             tile.Reward.Value
           ),
           _react2.default.createElement(
-            "small",
+            'small',
             null,
             _react2.default.createElement(
-              "abbr",
+              'abbr',
               null,
-              " pts"
+              ' pts'
             )
+          )
+        )
+      );
+    }
+  }]);
+
+  return Tile;
+}(_react.Component);
+
+exports.default = Tile;
+
+/***/ }),
+/* 407 */
+/* no static exports found */
+/* all exports used */
+/*!**********************************!*\
+  !*** ./src/components/modal.jsx ***!
+  \**********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(/*! react */ 30);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Modal = function Modal() {
+  return _react2.default.createElement(
+    "div",
+    { className: "modal fade", id: "tileModal", tabIndex: "-1", role: "dialog" },
+    _react2.default.createElement(
+      "div",
+      { className: "modal-dialog", role: "document" },
+      _react2.default.createElement(
+        "div",
+        { className: "modal-content" },
+        _react2.default.createElement(
+          "div",
+          { className: "modal-header" },
+          _react2.default.createElement(
+            "h4",
+            { className: "modal-title", id: "tileModalLabel" },
+            "Tile Preview"
+          ),
+          _react2.default.createElement(
+            "button",
+            { type: "button", className: "close", "data-dismiss": "modal" },
+            "\xD7"
+          )
+        ),
+        _react2.default.createElement("div", { className: "modal-body", id: "tileModalBody" }),
+        _react2.default.createElement(
+          "div",
+          { className: "modal-footer" },
+          _react2.default.createElement(
+            "button",
+            { type: "button", className: "btn btn-secondary", "data-dismiss": "modal" },
+            "Close"
           )
         )
       )
@@ -40729,7 +40752,7 @@ var Tile = function Tile(props) {
   );
 };
 
-exports.default = Tile;
+exports.default = Modal;
 
 /***/ })
 /******/ ]);

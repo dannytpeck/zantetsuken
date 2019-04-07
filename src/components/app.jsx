@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Header from './header';
 import Footer from './footer';
-import UploadModal from './upload_modal';
+import Modal from './modal';
 import Tile from './tile';
 
 import updateAllHotTopics from '../helpers/update_all_hot_topics';
@@ -184,7 +184,7 @@ class App extends Component {
         </div>
 
         <Footer />
-        <UploadModal />
+        <Modal />
       </div>
     );
   }
