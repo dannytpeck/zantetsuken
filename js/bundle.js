@@ -5948,6 +5948,10 @@ var _upload_modal = __webpack_require__(/*! ./upload_modal */ 153);
 
 var _upload_modal2 = _interopRequireDefault(_upload_modal);
 
+var _tile = __webpack_require__(/*! ./tile */ 406);
+
+var _tile2 = _interopRequireDefault(_tile);
+
 var _update_all_hot_topics = __webpack_require__(/*! ../helpers/update_all_hot_topics */ 405);
 
 var _update_all_hot_topics2 = _interopRequireDefault(_update_all_hot_topics);
@@ -5972,7 +5976,9 @@ var App = function (_Component) {
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
     _this.state = {
-      clients: []
+      clients: [],
+      selectedClient: null,
+      tiles: []
     };
     return _this;
   }
@@ -6060,47 +6066,140 @@ var App = function (_Component) {
       });
     }
   }, {
+    key: 'getActivitiesForOneClient',
+    value: function getActivitiesForOneClient(client) {
+      var _this3 = this;
+
+      if (client) {
+        if (client.fields['LimeadeAccessToken']) {
+          console.log('Getting visible Home page activities for ' + client.fields['Account Name']);
+          $.ajax({
+            url: 'https://api.limeade.com/api/activities/?types=5&status=1&attributes=1&contents=32319',
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+              Authorization: 'Bearer ' + client.fields['LimeadeAccessToken']
+            },
+            contentType: 'application/json; charset=utf-8'
+          }).done(function (result) {
+            var tiles = result.Data;
+
+            // Place mass updater function(s) here
+            console.log(tiles);
+            _this3.setState({ tiles: tiles });
+          }).fail(function (xhr, textStatus, error) {
+            console.error(client.fields['Account Name'] + ' - GET Activities has failed');
+          });
+        } else {
+          console.error(client.fields['Account Name'] + ' has no LimeadeAccessToken');
+        }
+      } else {
+        console.log('No client has been selected');
+      }
+    }
+  }, {
+    key: 'setSelectedClient',
+    value: function setSelectedClient(e) {
+      var _this4 = this;
+
+      this.state.clients.forEach(function (client) {
+        if (client.fields['Limeade e='] === e.target.value) {
+          _this4.setState({ selectedClient: client });
+        }
+      });
+    }
+  }, {
+    key: 'renderEmployerNames',
+    value: function renderEmployerNames() {
+      return this.state.clients.map(function (client) {
+        return _react2.default.createElement(
+          'option',
+          { key: client.id },
+          client.fields['Limeade e=']
+        );
+      });
+    }
+  }, {
+    key: 'renderTiles',
+    value: function renderTiles() {
+      return this.state.tiles.map(function (tile) {
+        return _react2.default.createElement(_tile2.default, { key: tile.Id, tile: tile });
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this5 = this;
 
       return _react2.default.createElement(
         'div',
         { id: 'app' },
         _react2.default.createElement(_header2.default, null),
         _react2.default.createElement(
+          'section',
+          { id: 'massUpdater' },
+          _react2.default.createElement(
+            'button',
+            { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+                return _this5.getActivityLifecycle();
+              } },
+            'Mass Update - ActivityLifecycle API'
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            '(pulls everything - past, present, and future - Even legacy CIEs)'
+          ),
+          _react2.default.createElement(
+            'button',
+            { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+                return _this5.getActivities();
+              } },
+            'Mass Update - Activities API'
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            '(what\'s visible in the platform)'
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'form-group' },
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'employerName' },
+            'EmployerName'
+          ),
+          _react2.default.createElement(
+            'select',
+            { id: 'employerName', className: 'form-control custom-select', onChange: function onChange(e) {
+                return _this5.setSelectedClient(e);
+              } },
+            _react2.default.createElement(
+              'option',
+              { defaultValue: true },
+              'Select Employer'
+            ),
+            this.renderEmployerNames()
+          )
+        ),
+        _react2.default.createElement(
           'button',
           { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
-              return _this3.getActivityLifecycle();
+              return _this5.getActivitiesForOneClient(_this5.state.selectedClient);
             } },
-          'ActivityLifecycle API'
+          'What on My Home Page?'
         ),
         _react2.default.createElement(
           'p',
           null,
-          '(pulls everything - past, present, and future - Even legacy CIEs)'
+          '(show\'s the home page as seen by the Admin)'
         ),
         _react2.default.createElement(
-          'p',
-          null,
-          '(good for mass updates to entire platforms, calendar builder, etc)'
-        ),
-        _react2.default.createElement(
-          'button',
-          { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
-              return _this3.getActivities();
-            } },
-          'Activities API'
-        ),
-        _react2.default.createElement(
-          'p',
-          null,
-          '(what\'s visible in the platform)'
-        ),
-        _react2.default.createElement(
-          'p',
-          null,
-          '(could be useful for seeing a list of currently visible content or building your own UI)'
+          'div',
+          { id: 'tileContainer' },
+          this.renderTiles()
         ),
         _react2.default.createElement(_footer2.default, null),
         _react2.default.createElement(_upload_modal2.default, null)
@@ -40563,6 +40662,74 @@ var updateAllHotTopics = function updateAllHotTopics(client, tiles) {
 };
 
 exports.default = updateAllHotTopics;
+
+/***/ }),
+/* 406 */
+/* no static exports found */
+/* all exports used */
+/*!*********************************!*\
+  !*** ./src/components/tile.jsx ***!
+  \*********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(/*! react */ 30);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Tile = function Tile(props) {
+  var tile = props.tile;
+  return _react2.default.createElement(
+    "div",
+    { className: "tile" },
+    _react2.default.createElement("img", { className: "tile-image", src: tile.SmallImageSrc, alt: "" }),
+    _react2.default.createElement(
+      "div",
+      { className: "tile-title" },
+      _react2.default.createElement(
+        "h3",
+        null,
+        tile.Title
+      )
+    ),
+    _react2.default.createElement(
+      "div",
+      { className: "n-item-details" },
+      _react2.default.createElement(
+        "div",
+        { className: "reward link-color" },
+        _react2.default.createElement(
+          "div",
+          { className: "reward-points-outer" },
+          _react2.default.createElement(
+            "span",
+            { className: "reward-points-num" },
+            tile.Reward.Value
+          ),
+          _react2.default.createElement(
+            "small",
+            null,
+            _react2.default.createElement(
+              "abbr",
+              null,
+              " pts"
+            )
+          )
+        )
+      )
+    )
+  );
+};
+
+exports.default = Tile;
 
 /***/ })
 /******/ ]);
