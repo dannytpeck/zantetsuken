@@ -57,12 +57,13 @@ class App extends Component {
           function isItA2019HotTopic(tile) {
             return tile.Name.includes('Hot Topics') &&
                    tile.StartDate.includes('2019') &&
-                   !tile.StartDate.includes('01') &&
-                   !tile.StartDate.includes('02') &&
-                   !tile.StartDate.includes('03');
+                   !tile.StartDate.includes('01-') &&
+                   !tile.StartDate.includes('02-') &&
+                   !tile.StartDate.includes('03-');
           }
 
           const filteredTiles = tiles.filter(isItA2019HotTopic);
+          console.log(client.fields['Account Name'], filteredTiles);
 
           if (filteredTiles.length > 0) {
             let updatedTiles = filteredTiles.slice(0);
@@ -70,34 +71,34 @@ class App extends Component {
             updatedTiles.map(tile => {
               if (tile.AboutChallenge.match(regex)) {
 
-                // Throttle requests
-                limiter.removeTokens(1, function() {
-                  $.ajax({
-                    url: 'https://api.limeade.com/api/admin/activity/' + tile.ChallengeId,
-                    type: 'PUT',
-                    dataType: 'json',
-                    headers: {
-                      'Authorization': 'Bearer ' + client.fields['LimeadeAccessToken']
-                    },
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({
-                      'AboutChallenge': tile.AboutChallenge.replace(regex, '%26participantCode%3D%5Bparticipantcode%5D%26eventType%3DHot%20Topics')
-                    })
-                  }).done(result => {
-                    console.log('Tile updated - ' + tile.Name);
-                  }).fail((xhr, textStatus, error) => {
-                    console.error('Tile update PUT has failed', tile);
-                    console.error('Client =', client.fields['Account Name']);
-                  });
+              // Throttle requests
+              limiter.removeTokens(1, function() {
+                $.ajax({
+                  url: 'https://api.limeade.com/api/admin/activity/' + tile.ChallengeId,
+                  type: 'PUT',
+                  dataType: 'json',
+                  headers: {
+                    'Authorization': 'Bearer ' + client.fields['LimeadeAccessToken']
+                  },
+                  contentType: 'application/json; charset=utf-8',
+                  data: JSON.stringify({
+                    'AboutChallenge': tile.AboutChallenge.replace(regex, '%26participantCode%3D%5Bparticipantcode%5D%26eventType%3DHot%20Topics')
+                  })
+                }).done(result => {
+                  console.log('Tile updated - ' + tile.Name);
+                }).fail((xhr, textStatus, error) => {
+                  console.error('Tile update PUT has failed', tile);
+                  console.error('Client =', client.fields['Account Name']);
                 });
-
-                } else {
-                  console.log('Update unnecessary');
-                }
               });
-            } else {
-              console.log(client.fields['Account Name'] + ' does not have Hot Topics');
-            }
+
+              } else {
+                console.log('Update unnecessary');
+              }
+            });
+          } else {
+            console.log(client.fields['Account Name'] + ' does not have Hot Topics');
+          }
         }).fail((xhr, textStatus, error) => {
           console.error('GET Activities has failed');
           console.error('Client =', client.fields['Account Name']);
