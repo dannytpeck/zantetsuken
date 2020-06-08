@@ -145,7 +145,7 @@ function App() {
           <td>
             {
               hasApp ? 'Coaching + App' :
-                hasCoaching ? 'No App' : 'No Coaching'
+                hasCoaching ? 'Coaching, No App' : 'Non-Coaching'
             }
           </td>
           <td>

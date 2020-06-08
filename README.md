@@ -1,8 +1,9 @@
 # Zantetsuken
 
-An app to automate content updates and bug fixes
 Cut through captcha by directly calling the API layer
-Basically a new approach to "HP Tile Updater" that should be more evergreen
+
+Used in cases where you need to cycle through every activity in every platform for mass updates
+(when you have the name but not the ID, for example)
 
 ### Getting Started ###
 
