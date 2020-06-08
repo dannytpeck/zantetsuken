@@ -17,32 +17,15 @@ body {
   margin: 1em 0;
 }
 
-#massUpdater {
-  text-align: center;
+#spinner {
+  width: 2.3rem;
+  display: none;
 }
 
-.tile {
-  display: inline-block;
-  width: 31%;
-  margin: 1%;
+.table td, .table th {
+  vertical-align: middle;
 }
 
-.tile-image {
-  width: 100%;
-}
-
-.tile-title {
-  height: 2.8em;
-  overflow: hidden;
-  margin: 0.75em 1.125em 0.9375em;
-  font-size: 1em;
-  font-weight: 500;
-}
-
-.brandingBckgrndColor {
-  background-color: #369;
-}
-
-#bottomImage {
-  width: 100%;
+.table a {
+  color: inherit;
 }
