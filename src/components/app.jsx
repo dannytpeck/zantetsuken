@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 
 import Airtable from 'airtable';
 const base = new Airtable({ apiKey: 'keyCxnlep0bgotSrX' }).base('appHXXoVD1tn9QATh');
 
 import Header from './header';
 import Footer from './footer';
-
-import updateAllHotTopics from '../helpers/update_all_hot_topics';
 
 function reducer(state, action) {
   return [...state, ...action];
@@ -65,7 +64,10 @@ function App() {
           $('#finishedUploads').html(count + 1);
 
           result.Data.map(activity => {
-            if (activity.Name.includes('Not Alone: Mental Health')) {
+            // Is the EndDate in the future?
+            const activityActive = moment() < moment(activity.EndDate);
+
+            if (activity.Name.includes('Not Alone: Mental Health') && activityActive) {
               activity.client = client;
               dispatchActivities([...activities, activity]);
             }
@@ -83,34 +85,34 @@ function App() {
 
   }
 
-  function performUpdate(activity) {
-    if (activity.AboutChallenge.includes('anxiety_antidote')) {
-      console.log('anxiety_antidote found, update not needed');
-    } else {
+  function updateChallenge(activity) {
+    const employerName = activity.client.fields['Limeade e='];
 
-      const employerName = activity.client.fields['Limeade e='];
-      const psk = activity.client.fields['Limeade PSK'];
+    const updatedAboutChallenge = activity.AboutChallenge;
 
-      const csv = createCSV(activity);
-      const url = 'https://calendarbuilder.dev.adurolife.com/limeade-upload/';
+    $.ajax({
+      url: 'https://api.limeade.com/api/admin/activity/' + activity.ChallengeId,
+      type: 'PUT',
+      dataType: 'json',
+      data: JSON.stringify({
+        'AboutChallenge': updatedAboutChallenge
+      }),
+      headers: {
+        Authorization: 'Bearer ' + activity.client.fields['LimeadeAccessToken']
+      },
+      contentType: 'application/json; charset=utf-8'
+    }).done((result) => {
 
-      const params = {
-        e: employerName,
-        psk: psk,
-        data: csv.join('\n'),
-        type: 'IncentiveEvents'
-      };
+      // Change row to green on success (and remove red if present)
+      $('#' + employerName.replace(/\s*/g, '')).removeClass('bg-danger');
+      $('#' + employerName.replace(/\s*/g, '')).addClass('bg-success text-white');
 
-      $.post(url, params).done((response) => {
-        $('#' + employerName.replace(/\s*/g, '')).addClass('bg-success text-white');
-      }).fail((request, status, error) => {
-        $('#' + employerName.replace(/\s*/g, '')).addClass('bg-danger text-white');
-        console.error(request.status);
-        console.error(request.responseText);
-        console.log('Update CIE failed for client ' + employerName);
-      });
-
-    }
+    }).fail((request, status, error) => {
+      $('#' + employerName.replace(/\s*/g, '')).addClass('bg-danger text-white');
+      console.error(request.status);
+      console.error(request.responseText);
+      console.log('Update challenge failed for client', activity.client.fields['Limeade e=']);
+    });
   }
 
   function renderActivities() {
@@ -133,7 +135,6 @@ function App() {
     return sortedActivities.map((activity) => {
       const employerName = activity.client.fields['Limeade e='];
       const domain = activity.client.fields['Domain'];
-      const eventId = activity.ChallengeId * -1;
 
       const hasApp = activity.AboutChallenge.match(/Resources in the Aduro App/g);
       const hasCoaching = activity.AboutChallenge.match(/Connect to coach support/g);
@@ -141,7 +142,8 @@ function App() {
       return (
         <tr id={employerName.replace(/\s*/g, '')} key={employerName}>
           <td>{activity.client.fields['Account Name']}</td>
-          <td><a href={`${domain}/Home/?cid=${eventId}`} target="_blank">{activity.Name}</a></td>
+          <td><a href={`${domain}/Home/?cid=${activity.ChallengeId}`} target="_blank">{activity.Name}</a></td>
+          <td><a href={`${domain}/admin/program-designer/activities/activity/${activity.ChallengeId}`} target="_blank">{activity.ChallengeId}</a></td>
           <td>
             {
               hasApp ? 'Coaching + App' :
@@ -149,7 +151,7 @@ function App() {
             }
           </td>
           <td>
-            <button type="button" className="btn btn-primary" onClick={() => performUpdate(activity)}>Update</button>
+            <button type="button" className="btn btn-primary" onClick={() => updateChallenge(activity)}>Update</button>
           </td>
         </tr>
       );
@@ -171,6 +173,7 @@ function App() {
           <tr>
             <th scope="col">Account Name</th>
             <th scope="col">Name</th>
+            <th scope="col">Challenge Id</th>
             <th scope="col">Type</th>
             <th scope="col">Update</th>
           </tr>
